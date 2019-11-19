@@ -35,7 +35,7 @@ extern void *SubGetImageByName(const char *filename) __asm__("SubGetImageByName"
 void *MSGetImageByName(const char *filename) {
     void* image = SubGetImageByName(filename);
     if(MSDebug){
-        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSGetImageByName: %{public}s, image: %p", filename, image);
+        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSGetImageByName: %{public}s, image: %p; called from %{public}s", filename, image, GetAddrInfo(__builtin_return_address(0)));
     }
     return image;
 }
@@ -44,7 +44,7 @@ extern void *SubFindSymbol(void *image, const char *name) __asm__("SubFindSymbol
 void *MSFindSymbol(void *image, const char *name) {
     void* symbol = SubFindSymbol(image, name);
     if(MSDebug){
-        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSFindSymbol: %p, %{public}s, symbol: %{public}s", image, name, GetAddrInfo(symbol));
+        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSFindSymbol: %p, %{public}s, symbol: %{public}s; called from %{public}s", image, name, GetAddrInfo(symbol), GetAddrInfo(__builtin_return_address(0)));
     }
 	return symbol;
 }
@@ -52,7 +52,7 @@ void *MSFindSymbol(void *image, const char *name) {
 extern void SubHookFunction(void *symbol, void *replace, void **result) __asm__("SubHookFunction");
 void MSHookFunction(void *symbol, void *replace, void **result) {
     if(MSDebug){
-        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSHookFunction: %{public}s, %{public}s, %{public}s", GetAddrInfo(symbol), GetAddrInfo(replace), GetAddrInfo(result));
+        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSHookFunction: %{public}s, %{public}s, %{public}s; called from %{public}s", GetAddrInfo(symbol), GetAddrInfo(replace), GetAddrInfo(result), GetAddrInfo(__builtin_return_address(0)));
     }
 	SubHookFunction(symbol, replace, result);
 }
@@ -60,7 +60,7 @@ void MSHookFunction(void *symbol, void *replace, void **result) {
 extern void SubHookMessageEx(Class _class, SEL sel, IMP imp, IMP *result) __asm__("SubHookMessageEx");
 void MSHookMessageEx(Class _class, SEL sel, IMP imp, IMP *result) {
     if(MSDebug){
-        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSHookMessageEx: %{public}s, %{public}s, %{public}s, %{public}s", class_getName(_class), sel_getName(sel), GetAddrInfo(imp), GetAddrInfo(result));
+        os_log_debug(OS_LOG_DEFAULT, "libsubstrate-shim: MSHookMessageEx: %{public}s, %{public}s, %{public}s, %{public}s; called from %{public}s", class_getName(_class), sel_getName(sel), GetAddrInfo(imp), GetAddrInfo(result), GetAddrInfo(__builtin_return_address(0)));
     }
 	if (class_getInstanceMethod(_class, sel) || class_getClassMethod(_class, sel)) {
 		SubHookMessageEx(_class, sel, imp, result);
